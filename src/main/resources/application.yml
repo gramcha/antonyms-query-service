@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: antonyms-query-service
+  main:
+    web-application-type: none
+server:
+  port: 8083
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka/
+  instance:
+    leaseRenewalIntervalInSeconds: 1
+    leaseExpirationDurationInSeconds: 2
+#    instance-id: ${spring.application.name}:${random.value}
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          strategy: THREAD
+          thread:
+            timeoutInMilliseconds: 10000
+ribbon:
+  eager-load:
+    enabled: true

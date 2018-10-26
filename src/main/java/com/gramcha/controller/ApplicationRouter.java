@@ -13,17 +13,16 @@ import org.springframework.stereotype.Service;
  * Created by gramachandran on 26/10/18.
  */
 @Component
-public class Route {
-    @Autowired
-    private DiscoveryClient discoveryClient;
-    @Autowired
-    private ApplicationConfiguration applicationConfiguration;
+public class ApplicationRouter {
 
-//    public Router getRouter(Vertx vertx) {
-//        Router router = Router.router(vertx);
-//        router.route().handler(BodyHandler.create());
-//        router.get("/antonyms/:word").handler(this::antonyms);
-//        router.get("/info").handler(this::info);
-//        return router;
-//    }
+    @Autowired
+    private AntonymsQueryController antonymsQueryController;
+
+    public Router getRouter(Vertx vertx) {
+        Router router = Router.router(vertx);
+        router.route().handler(BodyHandler.create());
+        router.get("/antonyms/:word").handler(antonymsQueryController::antonyms);
+        router.get("/info").handler(antonymsQueryController::info);
+        return router;
+    }
 }
