@@ -1,7 +1,9 @@
 package com.gramcha.controller;
 
 import com.gramcha.config.ApplicationConfiguration;
+import com.gramcha.services.DatamuseClientService;
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.Json;
@@ -11,6 +13,8 @@ import io.vertx.ext.web.handler.BodyHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
 
 /**
  * Created by gramachandran on 26/10/18.
@@ -22,22 +26,26 @@ public class AntonymsQueryController {
     @Autowired
     private ApplicationConfiguration applicationConfiguration;
 
-    public Router getRouter(Vertx vertx) {
-        Router router = Router.router(vertx);
-        router.route().handler(BodyHandler.create());
-        router.get("/antonyms/:word").handler(this::antonyms);
-        router.get("/info").handler(this::info);
-        return router;
+    @Autowired
+    private DatamuseClientService datamuseClientService;
+
+
+    public void antonyms(RoutingContext routingContext) {
+        HttpServerResponse response = routingContext.response();
+        String word = routingContext.request().getParam("word");
+        Future<String> futureResult = datamuseClientService.getAntonyms(word);
+        futureResult.setHandler(result -> {
+            if (result.succeeded()) {
+                response.end(result.result());
+            } else {
+                routingContext.fail(result.cause());
+            }
+        });
+//        response
+//                .end(word);
     }
 
-    public void antonyms(RoutingContext routingContext){
-        String word = routingContext.request().getParam("word");
-        HttpServerResponse response = routingContext.response();
-        response
-                .putHeader("Content-Type", "text")
-                .end(word);
-    }
-    public void info(RoutingContext routingContext){
+    public void info(RoutingContext routingContext) {
 
         HttpServerResponse response = routingContext.response();
         response

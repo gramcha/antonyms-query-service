@@ -1,6 +1,7 @@
 package com.gramcha.controller;
 
 import com.gramcha.config.ApplicationConfiguration;
+import com.gramcha.services.VertxHolderService;
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
@@ -18,7 +19,11 @@ public class ApplicationRouter {
     @Autowired
     private AntonymsQueryController antonymsQueryController;
 
+    @Autowired
+    private VertxHolderService vertxHolderService;
+
     public Router getRouter(Vertx vertx) {
+        vertxHolderService.init(vertx);
         Router router = Router.router(vertx);
         router.route().handler(BodyHandler.create());
         router.get("/antonyms/:word").handler(antonymsQueryController::antonyms);
