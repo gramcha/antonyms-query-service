@@ -9,13 +9,15 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://127.0.0.1:8761/eureka/
+      defaultZone: http://eureka-discovery-service:8761/eureka/
   instance:
     leaseRenewalIntervalInSeconds: 1
     leaseExpirationDurationInSeconds: 2
 #    instance-id: ${spring.application.name}:${random.value}
 
 hystrix:
+  metrics:
+    enabled: true
   command:
     default:
       execution:
@@ -26,3 +28,13 @@ hystrix:
 ribbon:
   eager-load:
     enabled: true
+management:
+  endpoint:
+    hystrix:
+      stream:
+        enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: ["hystrix.stream","info","health"]
+      base-path: /actuator
